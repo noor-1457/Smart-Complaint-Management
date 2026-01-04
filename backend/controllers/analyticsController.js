@@ -167,15 +167,25 @@ export const getPriorityStats = async (req, res) => {
         }
       },
       {
-        $sort: {
-          $switch: {
-            branches: [
-              { case: { $eq: ['$_id', 'High'] }, then: 1 },
-              { case: { $eq: ['$_id', 'Medium'] }, then: 2 },
-              { case: { $eq: ['$_id', 'Low'] }, then: 3 }
-            ],
-            default: 4
+        $addFields: {
+          sortOrder: {
+            $switch: {
+              branches: [
+                { case: { $eq: ['$_id', 'High'] }, then: 1 },
+                { case: { $eq: ['$_id', 'Medium'] }, then: 2 },
+                { case: { $eq: ['$_id', 'Low'] }, then: 3 }
+              ],
+              default: 4
+            }
           }
+        }
+      },
+      {
+        $sort: { sortOrder: 1 }
+      },
+      {
+        $project: {
+          sortOrder: 0
         }
       }
     ]);
@@ -403,16 +413,26 @@ export const getStatusBreakdown = async (req, res) => {
         }
       },
       {
-        $sort: {
-          $switch: {
-            branches: [
-              { case: { $eq: ['$_id', 'Pending'] }, then: 1 },
-              { case: { $eq: ['$_id', 'In-Progress'] }, then: 2 },
-              { case: { $eq: ['$_id', 'Resolved'] }, then: 3 },
-              { case: { $eq: ['$_id', 'Closed'] }, then: 4 }
-            ],
-            default: 5
+        $addFields: {
+          sortOrder: {
+            $switch: {
+              branches: [
+                { case: { $eq: ['$_id', 'Pending'] }, then: 1 },
+                { case: { $eq: ['$_id', 'In-Progress'] }, then: 2 },
+                { case: { $eq: ['$_id', 'Resolved'] }, then: 3 },
+                { case: { $eq: ['$_id', 'Closed'] }, then: 4 }
+              ],
+              default: 5
+            }
           }
+        }
+      },
+      {
+        $sort: { sortOrder: 1 }
+      },
+      {
+        $project: {
+          sortOrder: 0
         }
       }
     ]);
